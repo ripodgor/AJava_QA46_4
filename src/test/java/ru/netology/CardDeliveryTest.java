@@ -20,17 +20,16 @@ public class CardDeliveryTest {
     }
 
     @Test   // №1
-    public void shouldSuccessfulFormSubmission() {
+    public void shouldBeSuccessfullyCompleted() {
         open("http://localhost:9999");
         $("[data-test-id=city] input").setValue("Волгоград");
-        $("[data-test-id=date] input").doubleClick().sendKeys(Keys.DELETE);
-        String verificationDate = LocalDate.now().plusDays(3)
-                .format(DateTimeFormatter.ofPattern("dd.MM.yyyy"));
-        $("[data-test-id=date] input").setValue(verificationDate);
-        $("[data-test-id=name] input").setValue("Иванов-Петров Иван");
-        $("[data-test-id=phone] input").setValue("+79019012121");
-        $("[data-test-id=agreement]").click();
-        $("//*[text()=\"Забронировать\"]").click();
+        String verificationDate = generateDate(7, "dd.MM.yyyy");
+        $("[data-test-id='date'] input").sendKeys(Keys.chord(Keys.SHIFT, Keys.HOME), Keys.DELETE);
+        $("[data-test-id='date'] input").sendKeys(verificationDate);
+        $("[data-test-id='name'] input").setValue("Иванов-Петров Иван");
+        $("[data-test-id='phone'] input").setValue("+79019012121");
+        $("[data-test-id='agreement']").click();
+        $("button.button").click();
         $("[data-test-id=notification]")
                 .shouldBe(Condition.visible, Duration.ofSeconds(15))
                 .shouldHave(Condition.text("Успешно! Встреча успешно забронирована на " + verificationDate));
@@ -59,3 +58,4 @@ public class CardDeliveryTest {
                 .shouldHave(Condition.text("Успешно! Встреча успешно забронирована на " + verificationDate));
     }
 }
+
